@@ -11,6 +11,7 @@ use Automattic\WooCommerce\Enums\ProductStatus;
 use Automattic\WooCommerce\Enums\ProductStockStatus;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Internal\CostOfGoodsSold\CostOfGoodsSoldController;
+use Automattic\WooCommerce\Internal\ProductAttributes\VisualAttributeTermMeta;
 use Automattic\WooCommerce\Internal\Orders\CouponsController;
 use Automattic\WooCommerce\Internal\Orders\TaxesController;
 use Automattic\WooCommerce\Internal\Orders\OrderNoteGroup;
@@ -619,6 +620,10 @@ class WC_AJAX {
 			wp_die();
 		}
 
+		if ( ProductStatus::PUBLISH !== $variable_product->get_status() && ! current_user_can( 'edit_post', $variable_product->get_id() ) ) {
+			wp_die();
+		}
+
 		$data_store   = WC_Data_Store::load( 'product' );
 		$variation_id = $data_store->find_matching_product_variation( $variable_product, wp_unslash( $_POST ) );
 		$variation    = $variation_id ? $variable_product->get_available_variation( $variation_id ) : false;
@@ -743,29 +748,6 @@ class WC_AJAX {
 	}
 
 	/**
-	 * Check if a product attribute taxonomy supports visual term colors.
-	 *
-	 * @param string $taxonomy Taxonomy slug.
-	 * @return bool
-	 *
-	 * @internal
-	 */
-	private static function is_visual_product_attribute_taxonomy( $taxonomy ) {
-		if ( ! taxonomy_exists( $taxonomy ) || ! taxonomy_is_product_attribute( $taxonomy ) ) {
-			return false;
-		}
-
-		if ( ! array_key_exists( 'wc-visual', wc_get_attribute_types() ) ) {
-			return false;
-		}
-
-		$attribute_id = wc_attribute_taxonomy_id_by_name( $taxonomy );
-		$attribute    = $attribute_id ? wc_get_attribute( $attribute_id ) : null;
-
-		return $attribute && 'wc-visual' === $attribute->type;
-	}
-
-	/**
 	 * Add a new attribute via ajax function.
 	 *
 	 * @return void
@@ -788,13 +770,7 @@ class WC_AJAX {
 						)
 					);
 				} else {
-					if ( self::is_visual_product_attribute_taxonomy( $taxonomy ) && isset( $_POST['term_color'] ) ) {
-						$color_value = sanitize_hex_color( wp_unslash( $_POST['term_color'] ) );
-
-						if ( $color_value ) {
-							update_term_meta( $result['term_id'], 'color', $color_value );
-						}
-					}
+					VisualAttributeTermMeta::save_term_visual_from_request( (int) $result['term_id'], $taxonomy, $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 					$term = get_term_by( 'id', $result['term_id'], $taxonomy );
 					wp_send_json(
@@ -2084,9 +2060,13 @@ class WC_AJAX {
 	/**
 	 * Search for categories and return json.
 	 *
+	 * @deprecated 10.9.0 This callback was used by the removed async product editor category field.
+	 *
 	 * @return void
 	 */
 	public static function json_search_categories_tree() {
+		wc_deprecated_function( __METHOD__, '10.9.0' );
+
 		ob_start();
 
 		check_ajax_referer( 'search-categories', 'security' );
@@ -2616,7 +2596,7 @@ class WC_AJAX {
 				$response['consumer_key']    = $consumer_key;
 				$response['consumer_secret'] = $consumer_secret;
 				$response['message']         = __( 'API Key generated successfully. Make sure to copy your new keys now as the secret key will be hidden once you leave this page.', 'woocommerce' );
-				$response['revoke_url']      = '<a style="color: #a00; text-decoration: none;" href="' . esc_url( wp_nonce_url( add_query_arg( array( 'revoke-key' => $key_id ), admin_url( 'admin.php?page=wc-settings&tab=advanced&section=keys' ) ), 'revoke' ) ) . '">' . __( 'Revoke key', 'woocommerce' ) . '</a>';
+				$response['revoke_url']      = '<a style="color: var(--wc-destructive, #cc1818); text-decoration: none;" href="' . esc_url( wp_nonce_url( add_query_arg( array( 'revoke-key' => $key_id ), admin_url( 'admin.php?page=wc-settings&tab=advanced&section=keys' ) ), 'revoke' ) ) . '">' . __( 'Revoke key', 'woocommerce' ) . '</a>';
 			}
 		} catch ( Exception $e ) {
 			wp_send_json_error( array( 'message' => $e->getMessage() ) );
