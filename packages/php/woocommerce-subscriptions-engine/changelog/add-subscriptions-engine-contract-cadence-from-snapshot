@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Enrich the Api\Subscriptions contract reads so consumers get the billing cadence off the per-contract plan snapshot: add PlanSnapshot::get_billing_policy(), hydrate the snapshot onto fetched contracts (get/get_for_customer/list_for_customer), source the REST presenter cadence from the snapshot instead of a live PlanRepository join, and add Api\Subscriptions::get_related_orders() so the presenter stays facade-only.
