@@ -14,6 +14,7 @@ declare( strict_types=1 );
 
 namespace Automattic\WooCommerce\SubscriptionsEngine\Integration;
 
+use Automattic\WooCommerce\SubscriptionsEngine\Api\Rest\ContractsController;
 use Automattic\WooCommerce\SubscriptionsEngine\Integration\Gateway\CapabilityRegistry;
 use Automattic\WooCommerce\SubscriptionsEngine\Integration\Renewal\RenewalEngine;
 use Automattic\WooCommerce\SubscriptionsEngine\Integration\Storage\SchemaInstaller;
@@ -49,6 +50,15 @@ final class Bootstrap {
 		// back into the engine. Must run on every boot (not just activation) so
 		// AS can fire scheduled renewals.
 		RenewalEngine::register_hooks();
+
+		// Register the customer-portal REST routes. Routes must be registered on
+		// `rest_api_init`, where core gathers them for the live server.
+		add_action(
+			'rest_api_init',
+			static function (): void {
+				( new ContractsController() )->register_routes();
+			}
+		);
 
 		if ( did_action( 'init' ) ) {
 			self::maybe_install_schema();
