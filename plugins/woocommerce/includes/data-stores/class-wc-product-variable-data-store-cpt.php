@@ -259,7 +259,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				$prefetch                = $wpdb->get_results(
 					$wpdb->prepare(
 						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-						"SELECT DISTINCT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ({$children_placeholders}) AND meta_key IN ({$attributes_placeholders})",
+						"SELECT DISTINCT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id IN ( {$children_placeholders} ) AND meta_key IN ( {$attributes_placeholders} )",
 						...$child_ids,
 						...array_map( static fn( $attribute ) => wc_variation_attribute_name( $attribute['name'] ), $attributes )
 					)
@@ -707,7 +707,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$has_weight   = (bool) $wpdb->get_var(
 				$wpdb->prepare(
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_weight' AND meta_value > 0 AND post_id IN ({$placeholders}) LIMIT 1",
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_weight' AND meta_value > 0 AND post_id IN ( {$placeholders} ) LIMIT 1",
 					$child_ids
 				)
 			);
@@ -734,7 +734,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			$has_dimensions = (bool) $wpdb->get_var(
 				$wpdb->prepare(
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key IN ( '_length', '_width', '_height' ) AND meta_value > 0 AND post_id IN ({$placeholders}) LIMIT 1",
+					"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key IN ( '_length', '_width', '_height' ) AND meta_value > 0 AND post_id IN ( {$placeholders} ) LIMIT 1",
 					$child_ids
 				)
 			);
@@ -772,9 +772,9 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		if ( ! empty( $child_ids ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
 			if ( get_option( 'woocommerce_product_lookup_table_is_generating' ) ) {
-				$query = "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_stock_status' AND meta_value = %s AND post_id IN ({$placeholders}) LIMIT 1";
+				$query = "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_stock_status' AND meta_value = %s AND post_id IN ( {$placeholders} ) LIMIT 1";
 			} else {
-				$query = "SELECT product_id FROM {$wpdb->wc_product_meta_lookup} WHERE stock_status = %s AND product_id IN ({$placeholders}) LIMIT 1";
+				$query = "SELECT product_id FROM {$wpdb->wc_product_meta_lookup} WHERE stock_status = %s AND product_id IN ( {$placeholders} ) LIMIT 1";
 			}
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$has_matches = (bool) $wpdb->get_var( $wpdb->prepare( $query, $status, ...$child_ids ) );
@@ -841,7 +841,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 						FROM {$wpdb->postmeta}
 						WHERE meta_key = '_stock_status'
 							AND meta_value != %s
-							AND post_id IN ( SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_manage_stock' AND meta_value != 'yes' AND post_id IN ({$placeholders}) )",
+							AND post_id IN ( SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_manage_stock' AND meta_value != 'yes' AND post_id IN ( {$placeholders} ) )",
 						$status,
 						...$child_ids
 					)
@@ -883,7 +883,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$prices = $wpdb->get_col(
 				$wpdb->prepare(
-					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_price' AND post_id IN ({$placeholders})",
+					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_price' AND post_id IN ( {$placeholders} )",
 					$child_ids
 				)
 			);
@@ -934,9 +934,9 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		if ( ! empty( $child_ids ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
 			if ( get_option( 'woocommerce_product_lookup_table_is_generating' ) ) {
-				$query = "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_stock_status' AND post_id IN ({$placeholders})";
+				$query = "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_stock_status' AND post_id IN ( {$placeholders} )";
 			} else {
-				$query = "SELECT DISTINCT stock_status FROM {$wpdb->wc_product_meta_lookup} WHERE product_id IN ({$placeholders})";
+				$query = "SELECT DISTINCT stock_status FROM {$wpdb->wc_product_meta_lookup} WHERE product_id IN ( {$placeholders} )";
 			}
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$statuses = $wpdb->get_col( $wpdb->prepare( $query, $child_ids ) );
