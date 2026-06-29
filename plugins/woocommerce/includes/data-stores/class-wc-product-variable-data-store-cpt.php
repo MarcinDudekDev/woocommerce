@@ -87,7 +87,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 					if ( ! taxonomy_exists( $meta_value['name'] ) ) {
 						continue;
 					}
-					// Performance note: At this stage, the product factory has already primed the caches, so wc_get_object_terms does not present a concern.
+					// Performance note: at this stage, the product factory has already primed the caches, so wc_get_object_terms does not present a concern.
 					$id      = wc_attribute_taxonomy_id_by_name( $meta_value['name'] );
 					$options = wc_get_object_terms( $product_id, $meta_value['name'], 'term_id' );
 				} else {
