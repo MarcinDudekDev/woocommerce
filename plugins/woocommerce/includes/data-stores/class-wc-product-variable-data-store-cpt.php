@@ -832,8 +832,8 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		if ( $product->get_manage_stock() ) {
 			$child_ids = $product->get_children();
 			if ( ! empty( $child_ids ) ) {
-				$status             = $product->get_stock_status();
-				$placeholders       = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
+				$status       = $product->get_stock_status();
+				$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
 				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 				$children_to_update = $wpdb->get_col(
 					$wpdb->prepare(
