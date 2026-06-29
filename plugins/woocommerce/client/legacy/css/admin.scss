@@ -8644,6 +8644,93 @@ table.bar_chart {
 		margin-right: 4px;
 	}
 
+	&.post-type-product #submitdiv {
+		--wc-product-publish-spacing-1: var(--wp-admin-grid-unit-05, 4px);
+		--wc-product-publish-spacing-2: var(--wp-admin-grid-unit-10, 8px);
+		--wc-product-publish-icon-size: 20px;
+		--wc-product-publish-row-horizontal-padding: 10px;
+		--wc-product-publish-summary-row-offset: calc(
+			var(--wc-product-publish-icon-size) +
+				6px
+		);
+		--wc-product-publish-panel-offset: calc(
+			var(--wc-product-publish-icon-size) +
+				5px
+		);
+
+		.misc-pub-catalog-visibility {
+			padding-left: calc(
+				var(--wc-product-publish-row-horizontal-padding) +
+					var(--wc-product-publish-summary-row-offset)
+			);
+			position: relative;
+		}
+
+		.misc-pub-catalog-visibility::before {
+			color: currentColor;
+			content: "\f180";
+			content: "\f180" / "";
+			display: inline-block;
+			font: normal 20px/1 dashicons;
+			left: calc(var(--wc-product-publish-row-horizontal-padding) - 1px);
+			position: absolute;
+			speak: never;
+			top: calc(var(--wc-product-publish-spacing-2) - 2px);
+			vertical-align: top;
+			width: var(--wc-product-publish-icon-size);
+		}
+
+		#catalog-visibility-display,
+		#catalog-visibility-select label {
+			overflow-wrap: anywhere;
+		}
+
+		#catalog-visibility-select {
+			margin-left: calc(-1 * var(--wc-product-publish-panel-offset));
+			width: calc(100% + var(--wc-product-publish-panel-offset));
+		}
+
+		#catalog-visibility-select > p:first-of-type {
+			color: #646970;
+			margin: var(--wc-product-publish-spacing-1) 0
+				var(--wc-product-publish-spacing-2);
+		}
+
+		#catalog-visibility-select input[type="radio"],
+		#catalog-visibility-select input[type="checkbox"] {
+			margin: 0 var(--wc-product-publish-spacing-1)
+				var(--wc-product-publish-spacing-1) 0;
+			vertical-align: text-top;
+		}
+
+		#catalog-visibility-select label.selectit + br + br {
+			display: none;
+		}
+
+		#catalog-visibility-select #_featured,
+		#catalog-visibility-select label[for="_featured"] {
+			position: relative;
+			top: calc(
+				var(--wc-product-publish-spacing-2) -
+					5px
+			);
+		}
+
+		#catalog-visibility-select label.selectit,
+		#catalog-visibility-select label[for="_featured"] {
+			display: inline-block;
+			line-height: 1.5;
+			max-width: calc(100% - 28px);
+		}
+
+		#catalog-visibility-select > p:last-child {
+			align-items: center;
+			display: flex;
+			gap: var(--wc-product-publish-spacing-2);
+			margin: var(--wc-product-publish-spacing-2) 0 0;
+		}
+	}
+
 	// Shipping zone name input: ID selector in the base rule outranks the form-table override above.
 	.wc-shipping-zone-settings #zone_name {
 		padding: 0 12px;
