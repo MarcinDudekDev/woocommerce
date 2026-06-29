@@ -23,7 +23,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	 */
 	public function provider_lookup_table_generating(): array {
 		return array(
-			'lookup table available'          => array( false ),
+			'lookup table available'                      => array( false ),
 			'lookup table generating (postmeta fallback)' => array( true ),
 		);
 	}
@@ -854,7 +854,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	 * @testdox read_attributes skips the child meta migration DB query when the product has no children.
 	 */
 	public function test_read_attributes_handles_bc_break_migration_when_no_children(): void {
-		$product    = new WC_Product_Variable();
+		$product = new WC_Product_Variable();
 		$product->set_name( 'Dummy Variable Product' );
 		$product->save();
 		$product_id = $product->get_id();
@@ -891,8 +891,8 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 		$product_id = $product->get_id();
 
 		// Inject a stale taxonomy attribute that is no longer registered.
-		$stored                     = get_post_meta( $product_id, '_product_attributes', true );
-		$stored['pa_nonexistent']   = array(
+		$stored                   = get_post_meta( $product_id, '_product_attributes', true );
+		$stored['pa_nonexistent'] = array(
 			'name'         => 'pa_nonexistent',
 			'value'        => '',
 			'position'     => 1,
@@ -1205,6 +1205,8 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	/**
 	 * @dataProvider provider_lookup_table_generating
 	 * @testdox child_has_stock_status returns true when at least one child has the given status.
+	 *
+	 * @param bool $lookup_table_generating Whether the lookup table is currently being generated.
 	 */
 	public function test_child_has_stock_status_returns_true_when_child_matches( bool $lookup_table_generating ): void {
 		$data_store = new WC_Product_Variable_Data_Store_CPT();
@@ -1394,7 +1396,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		$this->assertSame(
 			array( 10.0, 15.0, 16.0, 17.0, 18.0, 19.0 ),
-			array_map( 'floatval', get_post_meta( $product->get_id(), '_price' ) )
+			array_map( 'floatval', get_post_meta( $product->get_id(), '_price', false ) )
 		);
 
 		foreach ( $child_ids as $child_id ) {
@@ -1403,7 +1405,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		$data_store->sync_price( $product );
 
-		$this->assertSame( array( 9.99 ), array_map( 'floatval', get_post_meta( $product->get_id(), '_price' ) ) );
+		$this->assertSame( array( 9.99 ), array_map( 'floatval', get_post_meta( $product->get_id(), '_price', false ) ) );
 
 		$product->delete();
 	}
@@ -1419,7 +1421,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		( new WC_Product_Variable_Data_Store_CPT() )->sync_price( $product );
 
-		$this->assertSame( array(), get_post_meta( $product->get_id(), '_price' ) );
+		$this->assertSame( array(), get_post_meta( $product->get_id(), '_price', false ) );
 
 		$product->delete();
 	}
@@ -1437,7 +1439,7 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 
 		( new WC_Product_Variable_Data_Store_CPT() )->sync_price( $product );
 
-		$this->assertSame( array(), get_post_meta( $product->get_id(), '_price' ) );
+		$this->assertSame( array(), get_post_meta( $product->get_id(), '_price', false ) );
 
 		$product->delete();
 	}
@@ -1445,6 +1447,8 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	/**
 	 * @dataProvider provider_lookup_table_generating
 	 * @testdox sync_stock_status sets instock when at least one child is in stock.
+	 *
+	 * @param bool $lookup_table_generating Whether the lookup table is currently being generated.
 	 */
 	public function test_sync_stock_status_sets_instock_when_any_child_in_stock( bool $lookup_table_generating ): void {
 		$product   = WC_Helper_Product::create_variation_product();
@@ -1473,6 +1477,8 @@ class WC_Product_Variable_Data_Store_CPT_Test extends WC_Unit_Test_Case {
 	/**
 	 * @dataProvider provider_lookup_table_generating
 	 * @testdox sync_stock_status sets on_backorder when no child is in stock but at least one is on backorder.
+	 *
+	 * @param bool $lookup_table_generating Whether the lookup table is currently being generated.
 	 */
 	public function test_sync_stock_status_sets_on_backorder_when_backorder_exists_and_none_in_stock( bool $lookup_table_generating ): void {
 		$product   = WC_Helper_Product::create_variation_product();
