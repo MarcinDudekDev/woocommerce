@@ -881,8 +881,8 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		if ( ! empty( $child_ids ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
 			$prices       = $wpdb->get_col(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				$wpdb->prepare(
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_price' AND post_id IN ({$placeholders})",
 					$child_ids
 				)
