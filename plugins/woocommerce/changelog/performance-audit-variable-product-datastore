@@ -1,0 +1,4 @@
+Significance: patch
+Type: performance
+
+Audit the variable product datastore and implement optimizations to improve database performance.
