@@ -835,8 +835,8 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 				$status       = $product->get_stock_status();
 				$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
 				$children_to_update = $wpdb->get_col(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 					$wpdb->prepare(
-						// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 						"SELECT post_id
 						FROM {$wpdb->postmeta}
 						WHERE meta_key = '_stock_status'
@@ -879,7 +879,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 		$child_ids = $product->get_visible_children();
 		if ( ! empty( $child_ids ) ) {
 			$placeholders = implode( ', ', array_fill( 0, count( $child_ids ), '%d' ) );
-			$prices = $wpdb->get_col(
+			$prices       = $wpdb->get_col(
 				$wpdb->prepare(
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 					"SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_price' AND post_id IN ({$placeholders})",
